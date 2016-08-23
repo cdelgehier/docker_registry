@@ -1,0 +1,13 @@
+---
+- hosts: all
+  roles:
+    #- role: common
+    - { role: common, become: yes }
+
+- hosts: registries
+  roles:
+    - { role: registry, become: yes }
+
+- hosts: nodes
+  roles:
+    - { role: node, become: yes }

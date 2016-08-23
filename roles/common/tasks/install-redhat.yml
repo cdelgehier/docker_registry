@@ -1,0 +1,34 @@
+---
+- name: Add repo
+  yum_repository:
+    name:        docker
+    description: Docker Repository
+    baseurl:     https://yum.dockerproject.org/repo/main/centos/$releasever/
+    enabled:     yes
+    gpgcheck:    yes
+    gpgkey:      https://yum.dockerproject.org/gpg
+  #become: yes
+
+- name: Install Engine
+  yum: 
+    name: 'docker-engine-{{docker_engine_version|default("*")}}'
+    update_cache: yes
+    state: present
+  #become: yes
+
+- name: Install epel
+  yum: name=epel-release enablerepo=extras state=present
+  #become: yes
+
+- name: Install pip
+  yum: 
+    name:  python-pip
+    state: present
+  #become: yes
+
+- name: Install compose
+  pip: 
+    name: docker-compose
+    #version: '{{ docker_compose_version }}'
+    state: forcereinstall
+  #become: yes
