@@ -3,28 +3,21 @@ version: '2'
 services:
 ###
   registry:
-    image: registry
+    image: registry:2
     ports:
       - "5000:5000"
     volumes:
       - registry_data:/var/lib/registry
+      - ./certs:/certs
     environment:
-      SETTINGS_FLAVOR: local 
       STORAGE_PATH: /var/lib/docker/registry
-      SEARCH_BACKEND: sqlalchemy
-      CACHE_REDIS_HOST: cache 
-      CACHE_REDIS_PORT: 6379
-      CACHE_LRU_REDIS_HOST: cache 
-      CACHE_LRU_REDIS_PORT: 6379
-    depends_on:
-      - cache
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      LOGLEVEL: INFO
 ###
-  cache: 
-    image: redis 
-###
-  
+
   frontend:
-    image: konradkleine/docker-registry-frontend
+    image: konradkleine/docker-registry-frontend:v2
     ports:
       - "8081:80"
     environment:
@@ -36,3 +29,7 @@ services:
 ###
 volumes:
   registry_data: {}
+  # registry_data:
+  #   driver: nfs
+  #   driver_opts:
+  #     share: my.nfs.host:/path/to/registry
